@@ -2,7 +2,8 @@ Package: biosonora
 Title: Acoustic Biodiversity Monitoring with BirdNET and Observation.org Export
 Version: 0.0.0.9000
 Authors@R:
-    person(given = "ajcanepa",
+    person(given = "Antonio",
+           family = "Canepa",
            role = c("aut", "cre"),
            email = "ajcanepa@gmail.com")
 Description: Shiny application to organise, visualise, listen to, review
