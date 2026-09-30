@@ -48,3 +48,38 @@ po/*~
 # RStudio Connect folder
 rsconnect/
 ACO_Docs/
+
+# ---- Biosonora ----
+# Grabaciones de audio reales: nunca al repositorio
+*.wav
+*.WAV
+*.flac
+*.FLAC
+*.mp3
+# Excepción: audios pequeños y sin datos personales para los tests
+!datos_ejemplo/**/*.wav
+!datos_ejemplo/**/*.WAV
+
+# Bases de datos y cachés de espectrogramas
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+*.db
+*.duckdb
+cache_espectrogramas/
+biosonora_datos/
+
+# renv: la librería del proyecto se reconstruye con renv::restore()
+renv/library/
+renv/local/
+renv/cellar/
+renv/lock/
+renv/python/
+renv/sandbox/
+renv/staging/
+
+# Configuración local y secretos
+.Renviron.local
+config_local.yml
+*.pem
+*.key

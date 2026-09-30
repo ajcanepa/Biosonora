@@ -1,0 +1,28 @@
+# Configuración de Biosonora.
+# Se elige el bloque con la variable de entorno GOLEM_CONFIG_ACTIVE
+# ("default" = local, "production" = servidor). Los bloques heredan de "default".
+# No escribas aquí contraseñas ni claves: usa variables de entorno (.Renviron).
+default:
+  golem_name: biosonora
+  golem_version: 0.0.0.9000
+  app_prod: no
+  # Modo de ejecución: "local" (lee una carpeta) o "server" (subida de archivos)
+  run_mode: local
+  # Zona horaria local para mostrar las fechas (las grabaciones AudioMoth suelen estar en UTC)
+  local_timezone: Europe/Madrid
+  # Rutas de datos de trabajo. Vacío = carpeta de datos de usuario del sistema
+  # (fuera de OneDrive, para evitar bloqueos de SQLite)
+  data_dir: ""
+  # Valores fijos para la exportación a Observation.org
+  observation_org:
+    method: "Oído"
+    counting_method: "Visto/Sin contar"
+    classifier: "BirdNET APP"
+    notes_template: "ID mediante {classifier}"
+
+production:
+  app_prod: yes
+  run_mode: server
+
+dev:
+  golem_wd: !expr golem::pkg_path()

@@ -1,0 +1,16 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^data-raw$
+dev_history.R
+^dev$
+$run_dev.*
+^.here$
+^LICENSE$
+^CLAUDE\.md$
+^Instrucciones$
+^ACO_Docs$
+^notas$
+^datos_ejemplo$
+^renv$
+^renv\.lock$
+^\.Rprofile$

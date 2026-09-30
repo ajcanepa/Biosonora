@@ -1,0 +1,48 @@
+Device ID                       : 24BBD608675B68F7
+Firmware                        : AudioMoth-Firmware-Basic (1.12.1)
+
+Device time                     : 2026-08-09 10:33:01 (UTC)
+
+Sample rate (Hz)                : 250000
+Gain                            : Medium
+
+Sleep duration (s)              : 5
+Recording duration (s)          : 55
+
+Active recording periods        : 1
+
+Recording period 1              : 16:00 - 21:00 (UTC)
+
+First recording date            : 2026-08-10 (UTC)
+Last recording date             : 2026-08-14 (UTC)
+
+Filter                          : -
+
+Trigger type                    : -
+Threshold setting               : -
+Minimum trigger duration (s)    : -
+
+Enable LED                      : No
+Enable low-voltage cut-off      : Yes
+Enable battery level indication : Yes
+
+Always require acoustic chime   : No
+Also require location in chime  : -
+Use timezone from chime         : No
+Also adjust recording schedule  : -
+
+Recording preparation time (s)  : 2
+Use device ID in WAV file name  : Yes
+Use daily folder for WAV files  : Yes
+
+Disable 48Hz DC blocking filter : No
+Enable energy saver mode        : No
+Enable low gain range           : No
+
+Ignore external microphone      : No
+
+Enable magnetic switch          : No
+
+Enable GPS time setting         : No
+GPS fix before and after        : -
+GPS fix time (mins)             : -
