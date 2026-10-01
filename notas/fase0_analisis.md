@@ -6,8 +6,8 @@ Fecha: 2026-09-30
 
 - Formato `Clave<espacios>: valor`, saltos de línea CRLF. `-` = "no aplica".
   Las unidades van en la clave (`Sample rate (Hz)`) y la zona horaria en el valor (`(UTC)`).
-- Los valores pueden contener `:` (`16:00 - 21:00 (UTC)`): no partir por el primer `:`,
-  sino por el separador `<espacios>: `.
+- Los valores pueden contener `:` (`16:00 - 21:00 (UTC)`), pero las claves no:
+  se corta por el primer `:`.
 - Puede haber varias líneas `Recording period N`.
 - Otros firmwares añaden campos: el lector debe aceptar claves desconocidas.
 - Datos útiles: Device ID, firmware, frecuencia de muestreo, ganancia, duración de
@@ -17,8 +17,8 @@ Fecha: 2026-09-30
   A 250 kHz una pista de 55 s ocupa ~27 MB y BirdNET necesita remuestrear a 48 kHz.
 - Duración de pista en el ejemplo: 55 s (+5 s de pausa), no 60 s.
 - Con "Use device ID in WAV file name: Yes" y "Use daily folder: Yes" los WAV
-  probablemente estén en subcarpetas diarias y se llamen `ID_AAAAMMDD_HHMMSS.WAV`.
-  **Pendiente de confirmar con archivos reales.**
+  están en subcarpetas diarias y se llaman `ID_AAAAMMDD_HHMMSS.WAV`
+  (confirmado con archivos reales en la Fase 1).
 - Todo en UTC ("Use timezone from chime: No"); no hay ubicación en el CONFIG.TXT.
 
 ## 2. observations-import-example.xlsx (Observation.org)

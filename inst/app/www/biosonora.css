@@ -1,0 +1,101 @@
+/* Estilos de Biosonora. Los colores base vienen del tema bslib (app_ui.R). */
+
+/* ---- Visor ---- */
+.bs-player {
+  position: relative;
+  display: flex;
+  min-height: 390px;
+  background: #0f1a14;             /* fondo oscuro: el espectrograma se lee mejor */
+  border-radius: 0.5rem;
+  padding: 6px 6px 4px 0;
+  overflow: hidden;
+}
+.bs-freq-axis {
+  flex: 0 0 58px;
+  position: relative;
+  color: #d7e3da;
+  font-size: 11px;
+}
+.bs-freq-axis-inner { position: relative; }
+.bs-freq-label {
+  position: absolute;
+  right: 6px;
+  transform: translateY(50%);
+  white-space: nowrap;
+}
+.bs-freq-label::after {           /* marca junto a la etiqueta */
+  content: "";
+  display: inline-block;
+  width: 4px;
+  height: 1px;
+  margin-left: 3px;
+  vertical-align: middle;
+  background: currentColor;
+}
+.bs-wave { flex: 1 1 auto; min-width: 0; color: #d7e3da; }
+.bs-spectro { position: relative; width: 100%; }
+.bs-spectro img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  user-select: none;
+  cursor: crosshair;
+}
+.bs-player-empty,
+.bs-player-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: #d7e3da;
+  font-size: 1.05rem;
+  text-align: center;
+  padding: 1rem;
+}
+.bs-player-loading { background: rgba(15, 26, 20, 0.75); z-index: 10; }
+.bs-time {
+  font-variant-numeric: tabular-nums;
+  font-size: 1rem;
+  min-width: 7.5rem;
+  align-self: center;
+}
+
+/* ---- Barra de controles: botones grandes, fáciles de pulsar ---- */
+.bs-toolbar .btn { min-width: 2.75rem; min-height: 2.5rem; }
+.bs-toolbar .form-group,
+.bs-toolbar .shiny-input-container { margin-bottom: 0; }
+.bs-toolbar .bs-slider { min-width: 220px; }
+.bs-toolbar .bs-slider-sm { min-width: 170px; }
+.bs-toolbar .radio-inline, .bs-toolbar .form-check-inline { margin-right: 0.6rem; }
+
+/* ---- Estados de revisión: símbolo + texto + color ---- */
+.bs-status { white-space: nowrap; font-weight: 500; }
+.bs-status-unreviewed { color: #6c757d; }
+.bs-status-in_review { color: #9a5d00; }
+.bs-status-reviewed { color: #2E6B4F; }
+.bs-status-badge.bs-status-unreviewed { background: #e9ecef; color: #343a40; }
+.bs-status-badge.bs-status-in_review { background: #fff0cc; color: #6b4100; }
+.bs-status-badge.bs-status-reviewed { background: #d8efdf; color: #1d4a35; }
+[data-bs-theme="dark"] .bs-status-unreviewed { color: #adb5bd; }
+[data-bs-theme="dark"] .bs-status-in_review { color: #ffc866; }
+[data-bs-theme="dark"] .bs-status-reviewed { color: #8fd6a8; }
+
+.bs-flag { cursor: help; margin-left: 0.15rem; }
+
+/* Pista abierta en la tabla */
+.bs-current-row { box-shadow: inset 4px 0 0 var(--bs-primary); font-weight: 600; }
+
+/* ---- Metadatos ---- */
+.bs-metadata summary { cursor: pointer; font-weight: 600; margin-bottom: 0.4rem; }
+.bs-metadata dt { font-weight: 500; color: var(--bs-secondary-color); }
+
+/* ---- Tablas reactable en modo oscuro ---- */
+[data-bs-theme="dark"] .ReactTable,
+[data-bs-theme="dark"] .rt-table { background: transparent; color: var(--bs-body-color); }
+[data-bs-theme="dark"] .rt-tr-striped { background: rgba(255, 255, 255, 0.04); }
+[data-bs-theme="dark"] .rt-tr-highlight:hover { background: rgba(255, 255, 255, 0.08); }
+[data-bs-theme="dark"] .rt-search,
+[data-bs-theme="dark"] .rt-page-size-select,
+[data-bs-theme="dark"] .rt-page-button { background: var(--bs-body-bg); color: var(--bs-body-color); }
