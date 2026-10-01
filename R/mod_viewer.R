@@ -20,7 +20,7 @@ mod_viewer_ui <- function(id) {
     bslib::card_body(
       # Barra de controles
       div(
-        class = "bs-toolbar d-flex flex-wrap align-items-end gap-3 mb-2",
+        class = "bs-toolbar d-flex flex-wrap align-items-end gap-2 mb-2",
         div(
           class = "btn-group", role = "group",
           i18n_attr(actionButton(ns("prev"), NULL, icon = icon("backward-step"),
@@ -49,10 +49,10 @@ mod_viewer_ui <- function(id) {
         ),
         div(class = "bs-control bs-slider",
             sliderInput(ns("freq"), i18n("viewer.freq_range"), min = 0, max = 24,
-                        value = c(0, 24), step = 0.5, post = " kHz")),
+                        value = c(0, 24), step = 0.5, post = " kHz", ticks = FALSE)),
         div(class = "bs-control bs-slider-sm",
             sliderInput(ns("contrast"), i18n("viewer.contrast"), min = 30, max = 120,
-                        value = 70, step = 5, post = " dB")),
+                        value = 70, step = 5, post = " dB", ticks = FALSE)),
         div(class = "bs-control",
             radioButtons(ns("palette"), i18n("viewer.palette"), inline = TRUE,
                          choiceNames = list("Viridis", "Magma", i18n("viewer.palette_grey")),

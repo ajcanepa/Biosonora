@@ -1,4 +1,22 @@
-/* Estilos de Biosonora. Los colores base vienen del tema bslib (app_ui.R). */
+/* Estilos de Biosonora. Los colores base vienen del tema bslib (app_ui.R).
+   El tamaño de letra base lo fija text_size.js (A− / A / A+). */
+
+/* ---- Interfaz compacta ---- */
+.bslib-sidebar-layout > .sidebar .shiny-input-container,
+.bslib-sidebar-layout > .sidebar .form-group { margin-bottom: 0.55rem; }
+.bslib-sidebar-layout > .sidebar h5 { font-size: 1rem; font-weight: 600; }
+.bslib-sidebar-layout > .sidebar hr { margin: 0.6rem 0; }
+.control-label, .form-label { margin-bottom: 0.15rem; font-size: 0.92rem; }
+.shiny-input-container .checkbox, .shiny-input-container .radio { margin-bottom: 0.1rem; }
+.card-header { padding-top: 0.45rem; padding-bottom: 0.45rem; }
+.irs--shiny { height: 46px; }                 /* deslizadores sin marcas numéricas */
+.irs--shiny .irs-min, .irs--shiny .irs-max { display: none; } /* los valores ya se ven arriba */
+.navbar { --bs-navbar-padding-y: 0.3rem; }
+.bs-text-size .btn { min-width: 2.3rem; font-weight: 600; }
+
+/* Botones con altura suficiente para pulsar en tableta (mínimo 36 px) */
+.btn { min-height: 36px; }
+.btn-sm { min-height: 32px; }
 
 /* ---- Visor ---- */
 .bs-player {
@@ -63,11 +81,12 @@
 }
 
 /* ---- Barra de controles: botones grandes, fáciles de pulsar ---- */
-.bs-toolbar .btn { min-width: 2.75rem; min-height: 2.5rem; }
+.bs-toolbar .btn { min-width: 2.6rem; min-height: 36px; }
 .bs-toolbar .form-group,
 .bs-toolbar .shiny-input-container { margin-bottom: 0; }
-.bs-toolbar .bs-slider { min-width: 220px; }
-.bs-toolbar .bs-slider-sm { min-width: 170px; }
+.bs-toolbar .bs-slider { min-width: 200px; }
+.bs-toolbar .bs-slider-sm { min-width: 150px; }
+.bs-toolbar .control-label { font-size: 0.85rem; }
 .bs-toolbar .radio-inline, .bs-toolbar .form-check-inline { margin-right: 0.6rem; }
 
 /* ---- Estados de revisión: símbolo + texto + color ---- */

@@ -9,6 +9,10 @@ common:
 nav:
   review: "Revisión"
   language: "Idioma"
+  text_size: "Tamaño del texto"
+  text_smaller: "Texto más pequeño"
+  text_normal: "Texto normal"
+  text_larger: "Texto más grande"
 
 status:
   unreviewed: "Sin revisar"

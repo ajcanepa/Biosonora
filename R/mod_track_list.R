@@ -12,7 +12,7 @@ mod_track_list_filters_ui <- function(id) {
     dateRangeInput(ns("dates"), i18n("filters.dates"), start = NULL, end = NULL,
                    weekstart = 1, separator = "–", width = "100%"),
     sliderInput(ns("hours"), i18n("filters.hours"), min = 0, max = 23,
-                value = c(0, 23), step = 1, width = "100%"),
+                value = c(0, 23), step = 1, ticks = FALSE, width = "100%"),
     selectizeInput(ns("sites"), i18n("filters.sites"), choices = NULL,
                    multiple = TRUE, width = "100%"),
     selectizeInput(ns("recorders"), i18n("filters.recorders"), choices = NULL,
@@ -327,7 +327,7 @@ build_table_data <- function(recs, lang) {
                          htmltools::htmlEscape(tr(key, lang), attribute = TRUE), symbol), "")
   }
   file_html <- paste0(
-    htmltools::htmlEscape(recs$file_name),
+    with_tooltip(recs$file_name),
     flags(!recs$datetime_reliable, "list.flag_unreliable_date", "⚠"),
     flags(recs$name_modified, "list.flag_renamed", "✎"),
     flags(!is.na(recs$duplicate_of), "list.flag_duplicate", "⧉"),
@@ -341,11 +341,19 @@ build_table_data <- function(recs, lang) {
     date = substr(recs$start_local, 1, 10),
     time = substr(recs$start_local, 12, 19),
     duration = format_duration(recs$duration_s),
-    recorder = recorder_label(recs, lang),
+    recorder = with_tooltip(recorder_label(recs, lang)),
     rate = ifelse(is.na(recs$sample_rate), "", paste(recs$sample_rate / 1000, "kHz")),
-    site = ifelse(is.na(recs$site_name), "", recs$site_name),
+    site = with_tooltip(ifelse(is.na(recs$site_name), "", recs$site_name)),
     stringsAsFactors = FALSE
   )
+}
+
+#' Texto (escapado) con el contenido completo al pasar el ratón, porque las
+#' celdas largas se cortan con "…"
+#' @noRd
+with_tooltip <- function(x) {
+  sprintf('<span title="%s">%s</span>', htmltools::htmlEscape(x, attribute = TRUE),
+          htmltools::htmlEscape(x))
 }
 
 #' Tabla de pistas (reactable)
@@ -369,28 +377,35 @@ track_table <- function(data, lang, open_input_id) {
            ? 'bs-current-row' : '';
        }"),
     sortable = FALSE,
+    # Las cabeceras pueden ocupar dos líneas; las celdas, una (con "…")
+    defaultColDef = reactable::colDef(headerStyle = list(whiteSpace = "normal")),
     searchable = TRUE,
     highlight = TRUE,
     compact = TRUE,
     striped = TRUE,
+    wrap = FALSE, # una línea por fila; el texto largo se corta con "…"
     defaultPageSize = 15,
     showPageSizeOptions = TRUE,
     pageSizeOptions = c(15, 30, 60, 120),
     columns = list(
       recording_id = reactable::colDef(show = FALSE),
-      status = col("list.col_status", html = TRUE, minWidth = 120),
-      file = col("list.col_file", html = TRUE, minWidth = 260),
-      date = col("list.col_date", minWidth = 95),
+      status = col("list.col_status", html = TRUE, minWidth = 115),
+      file = col("list.col_file", html = TRUE, minWidth = 205),
+      date = col("list.col_date", minWidth = 100),
       # La zona horaria se indica siempre junto a la hora
       time = reactable::colDef(
         name = tr("list.col_time", lang), minWidth = 90,
         header = function(value) htmltools::tagList(value, htmltools::tags$br(),
-                                                    htmltools::tags$small(class = "text-muted", tz))
+                                                    htmltools::tags$small(
+                                                      class = "text-muted",
+                                                      # Espacio invisible tras la barra: permite partir "Europe/Madrid"
+                                                      gsub("/", "/\u200B", tz, fixed = TRUE)
+                                                    ))
       ),
-      duration = col("list.col_duration", minWidth = 85),
-      recorder = col("list.col_recorder", minWidth = 180),
-      rate = col("list.col_rate", minWidth = 95),
-      site = col("list.col_site", minWidth = 100)
+      duration = col("list.col_duration", minWidth = 80),
+      recorder = col("list.col_recorder", html = TRUE, minWidth = 160),
+      rate = col("list.col_rate", minWidth = 80),
+      site = col("list.col_site", html = TRUE, minWidth = 90)
     ),
     language = reactable::reactableLang(
       searchPlaceholder = tr("list.search", lang),

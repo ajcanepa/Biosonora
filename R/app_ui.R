@@ -20,7 +20,7 @@ app_ui <- function(request) {
         value = "review",
         bslib::layout_sidebar(
           sidebar = bslib::sidebar(
-            width = 320,
+            width = 290,
             mod_load_ui("load"),
             tags$hr(),
             mod_track_list_filters_ui("tracks")
@@ -30,6 +30,7 @@ app_ui <- function(request) {
         )
       ),
       bslib::nav_spacer(),
+      bslib::nav_item(text_size_selector()),
       bslib::nav_item(
         tags$label(`for` = "lang", class = "visually-hidden", i18n("nav.language")),
         selectInput("lang", NULL, choices = c("Español" = "es", "English" = "en"),
@@ -37,6 +38,28 @@ app_ui <- function(request) {
       ),
       bslib::nav_item(bslib::input_dark_mode(id = "dark_mode"))
     )
+  )
+}
+
+#' Selector de tamaño de texto (A− / A / A+)
+#'
+#' Cambia el tamaño de letra de toda la página; se recuerda en el navegador.
+#' @noRd
+text_size_selector <- function() {
+  sizes <- list(c("small", "A\u2212", "nav.text_smaller"),
+                c("normal", "A", "nav.text_normal"),
+                c("large", "A+", "nav.text_larger"))
+  div(
+    class = "btn-group btn-group-sm bs-text-size", role = "group",
+    `aria-label` = tr("nav.text_size"), `data-i18n-aria-label` = "nav.text_size",
+    lapply(sizes, function(s) {
+      tags$button(
+        type = "button", class = "btn btn-outline-secondary", `data-size` = s[1],
+        title = tr(s[3]), `data-i18n-title` = s[3],
+        `aria-label` = tr(s[3]), `data-i18n-aria-label` = s[3],
+        s[2]
+      )
+    })
   )
 }
 
@@ -51,7 +74,13 @@ biosonora_theme <- function() {
     info = "#2F7A9E",      # azul agua
     warning = "#B8741A",   # ocre
     danger = "#B23A3A",
-    "font-size-base" = "0.95rem"
+    # El tamaño real lo fija el selector A− / A / A+ (text_size.js) cambiando
+    # el tamaño de letra de la página: todo se escala en proporción
+    "font-size-base" = "1rem",
+    "h5-font-size" = "1.05rem",
+    "spacer" = "0.85rem",
+    "card-spacer-y" = "0.75rem",
+    "card-spacer-x" = "0.9rem"
   )
 }
 
