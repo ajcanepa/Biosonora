@@ -38,11 +38,17 @@ app_ui <- function(request) {
         mod_species_list_ui("species")
       ),
       bslib::nav_panel(
+        title = i18n("nav.summary"),
+        value = "summary",
+        mod_summary_ui("summary")
+      ),
+      bslib::nav_panel(
         title = i18n("nav.export"),
         value = "export",
         mod_export_ui("export")
       ),
       bslib::nav_spacer(),
+      bslib::nav_item(mod_help_ui("help")),
       bslib::nav_item(mod_reviewer_ui("reviewer")),
       bslib::nav_item(text_size_selector()),
       bslib::nav_item(

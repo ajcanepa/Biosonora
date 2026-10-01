@@ -113,13 +113,15 @@ waveform_peaks <- function(x, n) {
 
 #' Paletas de color del espectrograma
 #'
-#' viridis y magma son aptas para daltonismo; "grey" es la alternativa en
-#' escala de grises (sonido fuerte = oscuro).
+#' viridis, magma y cividis son aptas para daltonismo (cividis está pensada
+#' para que se vea casi igual con y sin daltonismo); "grey" es la alternativa
+#' en escala de grises (sonido fuerte = oscuro).
 #' @noRd
 spectrogram_palette <- function(name = "viridis", n = 256) {
   switch(name,
     viridis = grDevices::hcl.colors(n, "viridis"),
     magma = grDevices::hcl.colors(n, "Inferno"),
+    cividis = grDevices::hcl.colors(n, "Cividis"),
     grey = rev(grDevices::gray.colors(n, start = 0, end = 1)),
     biosonora_abort("error.invalid_palette")
   )

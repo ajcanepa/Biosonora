@@ -20,7 +20,8 @@ mod_export_ui <- function(id) {
                          weekstart = 1, separator = "–"),
           selectizeInput(ns("obs_sites"), i18n("filters.sites"), choices = NULL, multiple = TRUE),
           div(
-            checkboxInput(ns("include_unverified"), i18n("export.include_unverified"), FALSE),
+            checkboxInput(ns("include_unverified"), tagList(i18n("export.include_unverified"),
+                                                            help_icon("help.unverified")), FALSE),
             conditionalPanel(
               sprintf("input['%s']", ns("include_unverified")),
               sliderInput(ns("unverified_conf"), i18n("export.unverified_threshold"), min = 50,
@@ -37,7 +38,7 @@ mod_export_ui <- function(id) {
     bslib::card(
       bslib::card_header(
         class = "d-flex justify-content-between align-items-center flex-wrap gap-2",
-        tags$span(icon("sitemap"), i18n("taxonomy.title")),
+        tags$span(icon("sitemap"), i18n("taxonomy.title"), help_icon("help.taxonomy")),
         actionButton(ns("edit_taxon"), i18n("taxonomy.edit"), icon = icon("pen"),
                      class = "btn-outline-primary btn-sm")
       ),

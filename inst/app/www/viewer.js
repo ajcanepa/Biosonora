@@ -16,15 +16,16 @@
   const WAVE_HEIGHT = 60;
 
   // Estilos de los rectángulos de detección. Van dentro de wavesurfer (shadow
-  // DOM), adonde no llega el CSS de la página. El estado se indica con color,
-  // tipo de borde y símbolo en la etiqueta (nunca solo con el color).
+  // DOM), adonde no llega el CSS de la página. El estado se indica con color
+  // (paleta Okabe-Ito, apta para daltonismo), tipo de borde y símbolo en la
+  // etiqueta: nunca solo con el color.
   const OVERLAY_CSS = `
     .bs-overlay { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
     .bs-overlay.drawing { pointer-events: auto; cursor: crosshair; background: rgba(255,255,255,0.05); }
-    .bs-box { position: absolute; box-sizing: border-box; border: 2px dashed #ffd54f; pointer-events: none; }
-    .bs-box.correct { border-style: solid; border-color: #7cf29a; }
-    .bs-box.incorrect { border-style: dotted; border-color: #ff7b7b; opacity: 0.75; }
-    .bs-box.doubtful { border-style: dashed; border-color: #ffb14e; }
+    .bs-box { position: absolute; box-sizing: border-box; border: 2px dashed #F0E442; pointer-events: none; }
+    .bs-box.correct { border-style: solid; border-color: #56B4E9; }
+    .bs-box.incorrect { border-style: dotted; border-color: #D55E00; opacity: 0.8; }
+    .bs-box.doubtful { border-style: dashed; border-color: #E69F00; }
     .bs-box.human { border-color: #e6e6e6;
       background: repeating-linear-gradient(45deg, rgba(255,255,255,0.10) 0 6px, transparent 6px 12px); }
     .bs-box.selected { border-width: 3px; box-shadow: 0 0 0 1px #000, 0 0 0 3px #fff; z-index: 2; }

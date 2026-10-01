@@ -15,6 +15,7 @@ Imports:
     bslib,
     config,
     DBI,
+    ggplot2,
     golem,
     jsonlite,
     processx,

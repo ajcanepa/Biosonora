@@ -19,6 +19,13 @@ i18n_attr <- function(tag, attr, key, lang = default_language) {
   target$allTags()
 }
 
+#' Botón que solo tiene icono: añade texto para lectores de pantalla y
+#' descripción al pasar el ratón (ambos traducibles)
+#' @noRd
+icon_button <- function(tag, key) {
+  i18n_attr(i18n_attr(tag, "title", key), "aria-label", key)
+}
+
 #' Duración en formato m:ss
 #' @noRd
 format_duration <- function(seconds) {

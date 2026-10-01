@@ -11,7 +11,8 @@ mod_species_list_ui <- function(id) {
     sidebar = bslib::sidebar(
       width = 290,
       h5(class = "mb-1", i18n("species.filters")),
-      sliderInput(ns("min_conf"), i18n("species.min_confidence"), min = 0, max = 100,
+      sliderInput(ns("min_conf"), tagList(i18n("species.min_confidence"), help_icon("help.min_confidence")),
+                  min = 0, max = 100,
                   value = 50, step = 5, post = " %", ticks = FALSE, width = "100%"),
       selectizeInput(ns("sites"), i18n("filters.sites"), choices = NULL, multiple = TRUE,
                      width = "100%"),

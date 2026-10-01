@@ -124,9 +124,9 @@
 .bs-val-pending { color: #8a6d00; }
 .bs-val-correct { color: #2E6B4F; }
 .bs-val-incorrect { color: #B23A3A; text-decoration: line-through; }
-.bs-val-doubtful { color: #b8741a; }
+.bs-val-doubtful { color: #8f5610; }
 .bs-species-validated { color: #2E6B4F; }
-.bs-species-doubtful { color: #b8741a; }
+.bs-species-doubtful { color: #8f5610; }
 .bs-species-pending { color: #6c757d; }
 [data-bs-theme="dark"] .bs-val-pending { color: #ffd54f; }
 [data-bs-theme="dark"] .bs-val-correct, [data-bs-theme="dark"] .bs-species-validated { color: #8fd6a8; }
@@ -138,3 +138,14 @@
 .bs-selected-detection { padding: 0.3rem 0.5rem; border-left: 4px solid var(--bs-primary);
   background: var(--bs-tertiary-bg); border-radius: 0.25rem; }
 .bs-reviewer { max-width: 14rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ---- Ayuda ---- */
+.bs-help-icon { color: var(--bs-info); margin-left: 0.3rem; cursor: help; font-size: 0.9em; }
+.bs-help-icon:focus-visible { outline: 2px solid var(--bs-info); outline-offset: 2px; border-radius: 50%; }
+.bs-welcome-icon { font-size: 2.2rem; color: var(--bs-primary); min-width: 3rem; text-align: center; }
+.bs-welcome h5 { font-weight: 600; }
+
+/* ---- Accesibilidad: foco siempre visible al navegar con el teclado ---- */
+.btn:focus-visible, .form-check-input:focus-visible, a:focus-visible {
+  outline: 3px solid var(--bs-warning); outline-offset: 2px;
+}

@@ -55,6 +55,9 @@ app_server <- function(input, output, session) {
   )
   mod_species_list_server("species", con, lang, reviewer, data_changed)
   mod_export_server("export", con, lang, reviewer, data_changed)
+  mod_summary_server("summary", con, lang, dark = reactive(identical(input$dark_mode, "dark")),
+                     data_changed)
+  mod_help_server("help", lang)
 
   # Botones y teclas "siguiente / anterior" del visor mueven la lista
   observeEvent(nav(), tracks$move(nav()$step))

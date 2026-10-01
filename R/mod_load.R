@@ -21,7 +21,7 @@ mod_load_ui <- function(id) {
     h5(class = "mb-1", i18n("load.title")),
     p(class = "text-muted small mb-2", i18n("load.help")),
     i18n_attr(
-      textInput(ns("folder"), label = i18n("load.folder_label"),
+      textInput(ns("folder"), label = tagList(i18n("load.folder_label"), help_icon("help.folder")),
                 value = initial_folder, width = "100%"),
       "placeholder", "load.folder_placeholder"
     ),
