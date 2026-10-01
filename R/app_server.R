@@ -5,8 +5,11 @@
 #' @import shiny
 #' @noRd
 app_server <- function(input, output, session) {
-  # ---- Base de datos (una conexión por sesión) ----
-  con <- db_connect()
+  # ---- Espacio de datos y base de datos (una conexión por sesión) ----
+  # En local hay un único espacio; en modo servidor, uno por usuario.
+  data_dir <- app_data_dir(user_space(session))
+  con <- db_connect(file.path(data_dir, "biosonora.sqlite"))
+  options(shiny.maxRequestSize = max_upload_mb() * 1024^2)
   session$onSessionEnded(function() DBI::dbDisconnect(con))
 
   # ---- Idioma ----
@@ -36,7 +39,7 @@ app_server <- function(input, output, session) {
   # ---- Módulos ----
   data_changed <- reactiveVal(0)
   reviewer <- mod_reviewer_server("reviewer", lang)
-  mod_load_server("load", con, lang, data_changed)
+  mod_load_server("load", con, lang, data_changed, data_dir)
   tracks <- mod_track_list_server("tracks", con, lang, data_changed)
   mod_birdnet_import_server("birdnet", con, lang, tracks$current, reviewer, data_changed)
   mod_birdnet_run_server("birdnet_run", con, lang, tracks, reviewer, data_changed)

@@ -15,3 +15,5 @@ $run_dev.*
 ^renv\.lock$
 ^\.Rprofile$
 ^python$
+^iniciar_biosonora\.R$
+^README\.en\.md$

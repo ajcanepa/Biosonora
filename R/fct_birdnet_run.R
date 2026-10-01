@@ -240,5 +240,6 @@ import_birdnet_job <- function(con, job, user = NA_character_) {
                                             classifier = "BirdNET-Analyzer 2.4.0", user = user)
     }
   }
+  unlink(job$work_dir, recursive = TRUE) # borrar los archivos temporales del análisis
   total
 }

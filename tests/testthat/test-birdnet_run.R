@@ -80,7 +80,8 @@ test_that("un análisis real de BirdNET se ejecuta en segundo plano y se importa
   }
   expect_equal(job$status, "finished")
   expect_equal(job$done, 1L)
+  expect_length(list.files(job$work_dir, "\\.BirdNET\\.results\\.csv$", recursive = TRUE), 1)
   n <- import_birdnet_job(con, job, "Test")
   expect_true(n >= 0) # un tono puro casi nunca da detecciones, pero no debe fallar
-  expect_true(length(list.files(job$work_dir, "\\.BirdNET\\.results\\.csv$", recursive = TRUE)) == 1)
+  expect_false(dir.exists(job$work_dir)) # los temporales se borran tras importar
 })

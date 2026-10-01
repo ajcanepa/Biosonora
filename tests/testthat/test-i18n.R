@@ -11,12 +11,16 @@ test_that("todas las claves escritas en el código existen", {
   r_dir <- testthat::test_path("..", "..", "R")
   skip_if_not(dir.exists(r_dir))
   code <- unlist(lapply(list.files(r_dir, full.names = TRUE), readLines, encoding = "UTF-8"))
-  keys <- unlist(regmatches(code, gregexpr(
-    '"(common|nav|status|recorder|datetime_source|load|filters|list|site|viewer|meta|error)\\.[a-z_]+"',
-    code)))
+  # Cualquier texto "seccion.clave" cuya sección exista en los archivos de idioma
+  sections <- unique(sub("\\..*$", "", names(i18n_dictionary("es"))))
+  keys <- unlist(regmatches(code, gregexpr('"[a-z_]+\\.[a-z0-9_]+"', code)))
+  keys <- keys[sub('^"([a-z_]+)\\..*$', "\\1", keys) %in% sections]
   keys <- unique(gsub('"', "", keys))
-  missing <- setdiff(keys, names(i18n_dictionary("es")))
-  expect_equal(missing, character())
+  all_keys <- names(i18n_dictionary("es"))
+  missing <- setdiff(keys, all_keys)
+  # Prefijos que el código completa con paste0() (p. ej. "welcome.step1" + "_title")
+  is_prefix <- vapply(missing, function(k) any(startsWith(all_keys, k)), logical(1))
+  expect_equal(missing[!is_prefix], character())
   # Claves que se construyen con paste0()
   built <- c(paste0("status.", review_statuses),
              paste0("recorder.", c("audiomoth", "manual", "unknown")),

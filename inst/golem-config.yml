@@ -13,6 +13,14 @@ default:
   # Rutas de datos de trabajo. Vacío = carpeta de datos de usuario del sistema
   # (fuera de OneDrive, para evitar bloqueos de SQLite)
   data_dir: ""
+  # Tamaño máximo de cada archivo subido (MB), también al descomprimir un ZIP
+  max_upload_mb: 2000
+  # Solo modo servidor: carpetas del servidor que se pueden analizar
+  # (el usuario elige de esta lista; nunca escribe rutas). Ejemplo:
+  #   server_folders:
+  #     - name: "Grabaciones compartidas"
+  #       path: "/srv/biosonora/grabaciones"
+  server_folders: []
   # Valores fijos para la exportación a Observation.org
   observation_org:
     method: "Oído"

@@ -59,6 +59,8 @@ load:
   summary_unreliable: "{n} have no reliable date: check their date and time."
   summary_errors: "{n} could not be read."
   summary_unknown_hint: "For recordings without a model, tick them in the list and use “Set recorder”."
+  help_server: "Choose one of the server's shared folders or upload your recordings."
+  server_folder: "Server folder"
 
 filters:
   title: "2. Filter and sort"
@@ -401,6 +403,7 @@ help:
   sites_plot: "Number of different species detected at each sampling site with the chosen filters."
   accumulation_plot: "How the number of species grows as recordings are added. If the curve flattens, sampling already captures almost all species of the place. The dashed line is the mean of 100 random orders and the band its 95 % interval."
   hours_plot: "Detections per hour of the day (local time). The most frequent species are shown separately."
+  upload: "Useful if recordings were sent to you by email or you work on the server. A ZIP may contain folders with the AudioMoth CONFIG.TXT. Uploaded recordings are stored in Biosonora's data folder."
 
 welcome:
   title: "Welcome to Biosonora"
@@ -438,3 +441,16 @@ summary:
   alt_sites: "Bar chart with the number of species per sampling site: {details}."
   alt_hours: "Bar chart with detections per hour of the day. Total: {n} detections; the busiest hour is {peak}:00."
   alt_accumulation: "Accumulation curve: {species} species in {recordings} recordings."
+
+
+upload:
+  label: "Or upload recordings (WAV or a ZIP)"
+  choose: "Upload files…"
+  rejected_title: "{n} files were not saved:"
+  nothing_stored: "No valid WAV recording was saved."
+  bad_extension: "file type not allowed (only .wav, .zip or CONFIG.TXT)"
+  too_big: "is too large"
+  bad_content: "its content is not a WAV or ZIP file (its extension may have been changed)"
+  bad_zip: "the ZIP is damaged or cannot be opened"
+  dangerous_path: "path not allowed inside the ZIP"
+  zip_too_big: "the unzipped content of the ZIP is too large"

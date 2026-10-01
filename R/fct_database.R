@@ -15,11 +15,14 @@
 #' OneDrive/Dropbox, para evitar bloqueos de SQLite). Se puede cambiar con
 #' `data_dir` en golem-config.yml o con la variable de entorno
 #' BIOSONORA_DATA_DIR (útil para tests y pruebas).
+#' @param space Espacio de un usuario en modo servidor (ver user_space());
+#'   NULL = espacio único (modo local).
 #' @noRd
-app_data_dir <- function() {
+app_data_dir <- function(space = NULL) {
   dir <- Sys.getenv("BIOSONORA_DATA_DIR", "")
   if (!nzchar(dir)) dir <- tryCatch(get_golem_config("data_dir"), error = function(e) "")
   if (is.null(dir) || !nzchar(dir)) dir <- tools::R_user_dir("biosonora", "data")
+  if (!is.null(space)) dir <- file.path(dir, "usuarios", space)
   dir.create(dir, recursive = TRUE, showWarnings = FALSE)
   normalizePath(dir, winslash = "/")
 }

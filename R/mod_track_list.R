@@ -121,13 +121,14 @@ mod_track_list_server <- function(id, con, lang, data_changed) {
       if (nrow(recs) == 0) return(recs)
       keep <- rep(TRUE, nrow(recs))
       if (!isTRUE(input$show_duplicates)) keep <- keep & is.na(recs$duplicate_of)
+      # Las grabaciones sin fecha (p. ej. archivos que no se pudieron leer)
+      # se muestran siempre: si no, la persona nunca vería que hay un problema
+      no_date <- is.na(recs$date_local)
       if (length(input$dates) == 2 && !any(is.na(input$dates))) {
-        keep <- keep & !is.na(recs$date_local) &
-          recs$date_local >= input$dates[1] & recs$date_local <= input$dates[2]
+        keep <- keep & (no_date | (recs$date_local >= input$dates[1] & recs$date_local <= input$dates[2]))
       }
       if (length(input$hours) == 2) {
-        keep <- keep & !is.na(recs$hour_local) &
-          recs$hour_local >= input$hours[1] & recs$hour_local <= input$hours[2]
+        keep <- keep & (no_date | (recs$hour_local >= input$hours[1] & recs$hour_local <= input$hours[2]))
       }
       if (length(input$sites)) {
         site_key <- ifelse(is.na(recs$site_name), "", recs$site_name)

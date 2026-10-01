@@ -59,6 +59,8 @@ load:
   summary_unreliable: "{n} no tienen fecha fiable: revisa su fecha y hora."
   summary_errors: "{n} no se han podido leer."
   summary_unknown_hint: "Para las grabaciones sin modelo, márcalas en la lista y usa «Indicar grabadora»."
+  help_server: "Elige una de las carpetas compartidas del servidor o sube tus grabaciones."
+  server_folder: "Carpeta del servidor"
 
 filters:
   title: "2. Filtrar y ordenar"
@@ -401,6 +403,7 @@ help:
   sites_plot: "Número de especies distintas detectadas en cada punto de muestreo con los filtros elegidos."
   accumulation_plot: "Cómo aumenta el número de especies al añadir grabaciones. Si la curva se aplana, el muestreo ya recoge casi todas las especies del lugar. La línea discontinua es la media de 100 órdenes al azar y la banda su intervalo del 95 %."
   hours_plot: "Detecciones por hora del día (hora local). Se muestran por separado las especies más frecuentes."
+  upload: "Útil si te han enviado grabaciones por correo o trabajas en el servidor. Un ZIP puede contener carpetas con el CONFIG.TXT de AudioMoth. Las grabaciones subidas se guardan en la carpeta de datos de Biosonora."
 
 welcome:
   title: "Bienvenida a Biosonora"
@@ -438,3 +441,16 @@ summary:
   alt_sites: "Gráfico de barras con el número de especies por punto de muestreo: {details}."
   alt_hours: "Gráfico de barras con las detecciones por hora del día. Total: {n} detecciones; la hora con más actividad es las {peak}."
   alt_accumulation: "Curva de acumulación: {species} especies en {recordings} grabaciones."
+
+
+upload:
+  label: "O sube grabaciones (WAV o un ZIP)"
+  choose: "Subir archivos…"
+  rejected_title: "{n} archivos no se han guardado:"
+  nothing_stored: "No se ha guardado ninguna grabación WAV válida."
+  bad_extension: "tipo de archivo no permitido (solo .wav, .zip o CONFIG.TXT)"
+  too_big: "es demasiado grande"
+  bad_content: "su contenido no es el de un archivo WAV o ZIP (puede tener la extensión cambiada)"
+  bad_zip: "el ZIP está dañado o no se puede abrir"
+  dangerous_path: "ruta no permitida dentro del ZIP"
+  zip_too_big: "el contenido del ZIP descomprimido es demasiado grande"
