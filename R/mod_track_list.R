@@ -17,6 +17,10 @@ mod_track_list_filters_ui <- function(id) {
                    multiple = TRUE, width = "100%"),
     selectizeInput(ns("recorders"), i18n("filters.recorders"), choices = NULL,
                    multiple = TRUE, width = "100%"),
+    sliderInput(ns("min_conf"), i18n("filters.min_confidence"), min = 0, max = 100,
+                value = 10, step = 5, post = " %", ticks = FALSE, width = "100%"),
+    selectizeInput(ns("species"), i18n("filters.species"), choices = NULL,
+                   multiple = TRUE, width = "100%"),
     checkboxGroupInput(
       ns("status"), i18n("filters.status"),
       choiceNames = lapply(paste0("status.", review_statuses), i18n),
@@ -68,9 +72,18 @@ mod_track_list_server <- function(id, con, lang, data_changed) {
     current <- reactiveVal(NULL)
     page_size <- 15
 
+    min_confidence <- reactive((input$min_conf %||% 10) / 100) |> debounce(250)
+
     all_recordings <- reactive({
       data_changed()
-      db_get_recordings(con, tz)
+      recs <- db_get_recordings(con, tz)
+      # Detecciones (no descartadas) por encima del umbral, por grabación
+      counts <- db_detection_counts(con, min_confidence())
+      idx <- match(recs$recording_id, counts$recording_id)
+      recs$n_detections <- ifelse(is.na(idx), 0L, counts$n_detections[idx])
+      recs$n_det_pending <- ifelse(is.na(idx), 0L, counts$n_pending[idx])
+      recs$species <- ifelse(is.na(idx), "", counts$species[idx])
+      recs
     })
 
     # ---- Actualizar las opciones de los filtros cuando cambian los datos ----
@@ -95,6 +108,10 @@ mod_track_list_server <- function(id, con, lang, data_changed) {
       updateSelectizeInput(session, "recorders", choices = recorders,
                            selected = isolate(input$recorders),
                            options = list(placeholder = tr("filters.all", lang())))
+      species <- sort(unique(unlist(strsplit(recs$species[nzchar(recs$species)], ",", fixed = TRUE))))
+      updateSelectizeInput(session, "species", choices = species,
+                           selected = isolate(input$species),
+                           options = list(placeholder = tr("filters.all", lang())))
     })
 
     # ---- Filtrar y ordenar ----
@@ -117,6 +134,11 @@ mod_track_list_server <- function(id, con, lang, data_changed) {
       }
       if (length(input$recorders)) {
         keep <- keep & recorder_label(recs, lang()) %in% input$recorders
+      }
+      if (length(input$species)) {
+        has <- vapply(strsplit(recs$species, ",", fixed = TRUE),
+                      function(sp) any(sp %in% input$species), logical(1))
+        keep <- keep & has
       }
       keep <- keep & recs$review_status %in% (input$status %||% character())
       recs <- recs[keep, , drop = FALSE]
@@ -295,7 +317,7 @@ mod_track_list_server <- function(id, con, lang, data_changed) {
       showNotification(tr("recorder.saved", lang(), n = length(ids)), type = "message")
     })
 
-    list(current = current, move = move)
+    list(current = current, move = move, min_confidence = min_confidence)
   })
 }
 
@@ -313,7 +335,8 @@ build_table_data <- function(recs, lang) {
   if (nrow(recs) == 0) {
     return(data.frame(recording_id = integer(), status = character(), file = character(),
                       date = character(), time = character(), duration = character(),
-                      recorder = character(), rate = character(), site = character()))
+                      detections = character(), recorder = character(), rate = character(),
+                      site = character()))
   }
   status_icon <- c(unreviewed = "○", in_review = "◐", reviewed = "●")
   status_html <- sprintf(
@@ -341,6 +364,12 @@ build_table_data <- function(recs, lang) {
     date = substr(recs$start_local, 1, 10),
     time = substr(recs$start_local, 12, 19),
     duration = format_duration(recs$duration_s),
+    # Detecciones sobre el umbral; entre paréntesis, las que faltan por revisar
+    detections = ifelse(recs$n_detections == 0, "",
+                        sprintf('<span title="%s">%d%s</span>',
+                                htmltools::htmlEscape(gsub(",", ", ", recs$species), attribute = TRUE),
+                                recs$n_detections,
+                                ifelse(recs$n_det_pending > 0, sprintf(" (%d \u25CB)", recs$n_det_pending), ""))),
     recorder = with_tooltip(recorder_label(recs, lang)),
     rate = ifelse(is.na(recs$sample_rate), "", paste(recs$sample_rate / 1000, "kHz")),
     site = with_tooltip(ifelse(is.na(recs$site_name), "", recs$site_name)),
@@ -390,7 +419,7 @@ track_table <- function(data, lang, open_input_id) {
     columns = list(
       recording_id = reactable::colDef(show = FALSE),
       status = col("list.col_status", html = TRUE, minWidth = 115),
-      file = col("list.col_file", html = TRUE, minWidth = 205),
+      file = col("list.col_file", html = TRUE, minWidth = 190),
       date = col("list.col_date", minWidth = 100),
       # La zona horaria se indica siempre junto a la hora
       time = reactable::colDef(
@@ -402,10 +431,11 @@ track_table <- function(data, lang, open_input_id) {
                                                       gsub("/", "/\u200B", tz, fixed = TRUE)
                                                     ))
       ),
-      duration = col("list.col_duration", minWidth = 80),
-      recorder = col("list.col_recorder", html = TRUE, minWidth = 160),
-      rate = col("list.col_rate", minWidth = 80),
-      site = col("list.col_site", html = TRUE, minWidth = 90)
+      duration = col("list.col_duration", minWidth = 75),
+      detections = col("list.col_detections", html = TRUE, minWidth = 80),
+      recorder = col("list.col_recorder", html = TRUE, minWidth = 150),
+      rate = col("list.col_rate", minWidth = 75),
+      site = col("list.col_site", html = TRUE, minWidth = 80)
     ),
     language = reactable::reactableLang(
       searchPlaceholder = tr("list.search", lang),

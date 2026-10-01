@@ -35,10 +35,24 @@ app_server <- function(input, output, session) {
 
   # ---- Módulos ----
   data_changed <- reactiveVal(0)
+  reviewer <- mod_reviewer_server("reviewer", lang)
   mod_load_server("load", con, lang, data_changed)
   tracks <- mod_track_list_server("tracks", con, lang, data_changed)
+  mod_birdnet_import_server("birdnet", con, lang, tracks$current, reviewer, data_changed)
+
+  # Eventos que envía el navegador (viewer.js): teclas, clic en una detección
+  # y rectángulo dibujado para una anotación nueva
   key_event <- reactive(input$biosonora_key)
-  nav <- mod_viewer_server("viewer", con, lang, tracks$current, media, data_changed, key_event)
+  nav <- mod_viewer_server("viewer", con, lang, tracks$current, media, data_changed,
+                           key_event, reviewer)
+  mod_detections_server(
+    "detections", con, lang, tracks$current, tracks$min_confidence, reviewer, data_changed,
+    player_id = "viewer-player",
+    events = list(key = key_event,
+                  box_click = reactive(input$biosonora_box_click),
+                  new_box = reactive(input$biosonora_new_box))
+  )
+  mod_species_list_server("species", con, lang, reviewer, data_changed)
 
   # Botones y teclas "siguiente / anterior" del visor mueven la lista
   observeEvent(nav(), tracks$move(nav()$step))

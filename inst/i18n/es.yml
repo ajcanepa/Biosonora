@@ -13,6 +13,7 @@ nav:
   text_smaller: "Texto más pequeño"
   text_normal: "Texto normal"
   text_larger: "Texto más grande"
+  species: "Especies"
 
 status:
   unreviewed: "Sin revisar"
@@ -71,6 +72,8 @@ filters:
   show_duplicates: "Mostrar copias duplicadas"
   no_site: "(sin punto asignado)"
   all: "Todos"
+  min_confidence: "Confianza mínima de BirdNET"
+  species: "Especies detectadas"
 
 list:
   title: "Grabaciones"
@@ -101,6 +104,7 @@ list:
   page_size: "Mostrar {rows}"
   select_all: "Marcar todas"
   select_row: "Marcar fila"
+  col_detections: "Detecc."
 
 site:
   modal_title: "Asignar punto de muestreo a {n} grabaciones"
@@ -136,6 +140,11 @@ viewer:
   key_reviewed: "Marcar como revisada"
   mark_reviewed: "Marcar como revisada"
   mark_unreviewed: "Volver a «en revisión»"
+  key_validate: "Detección correcta / incorrecta / dudosa"
+  key_fragment: "Escuchar el fragmento de la detección"
+  key_detections: "Detección anterior / siguiente"
+  key_annotate: "Nueva anotación (dibujar un rectángulo)"
+  key_escape: "Cancelar el dibujo"
 
 meta:
   title: "Datos de la grabación"
@@ -178,3 +187,103 @@ error:
   invalid_status: "Estado de revisión no válido."
   invalid_speed: "Velocidad de reproducción no válida."
   invalid_palette: "Paleta de colores no válida."
+  birdnet_empty: "El archivo «{file}» está vacío."
+  birdnet_unreadable: "No se ha podido leer «{file}» como tabla (CSV o texto separado por tabuladores)."
+  birdnet_unknown_format: "«{file}» no tiene el formato de resultados de BirdNET esperado. Columnas encontradas: {columns}. Se esperaba el CSV de BirdNET-Analyzer, una tabla de Raven o las columnas start, end, scientific_name, common_name, confidence."
+  birdnet_bad_times: "«{file}» tiene tiempos de inicio o fin no válidos (filas {rows})."
+  birdnet_bad_confidence: "«{file}» tiene valores de confianza fuera de 0–1 (filas {rows})."
+  birdnet_missing_species: "«{file}» tiene filas sin especie (filas {rows})."
+  species_required: "Escribe o elige una especie."
+  invalid_category: "Tipo de detección no válido."
+  annotation_too_small: "El rectángulo es demasiado pequeño. Vuelve a dibujarlo."
+  only_manual_delete: "Solo se pueden borrar las anotaciones manuales. Las de BirdNET márcalas como incorrectas."
+
+
+reviewer:
+  anonymous: "¿Quién revisa?"
+  title: "Tu nombre"
+  help: "Se guardará junto a cada validación y anotación, para saber quién hizo cada cambio. Este navegador lo recordará."
+  label: "Nombre y apellido (o alias)"
+  required: "Escribe tu nombre."
+  needed: "Antes de validar o anotar, indica quién eres."
+
+validation:
+  pending: "Sin revisar"
+  correct: "Correcta"
+  incorrect: "Incorrecta"
+  doubtful: "Dudosa"
+
+source:
+  birdnet: "BirdNET"
+  manual: "Manual"
+
+species_status:
+  validated: "Validada"
+  doubtful: "Dudosa"
+  pending: "Sin revisar"
+
+birdnet:
+  title: "3. Resultados de BirdNET"
+  help: "Importa los archivos de resultados (CSV o tabla de Raven). Se asocian solos a sus grabaciones."
+  choose: "Elegir archivos…"
+  no_file: "Ningún archivo elegido"
+  imported: "Importadas {n} detecciones nuevas de {files} archivos."
+  imported_manual: "Importadas {n} detecciones nuevas."
+  unmatched_title: "¿A qué grabación corresponden estos resultados?"
+  unmatched_help: "Estos archivos no indican de qué grabación proceden y no se ha podido deducir por su nombre. Elige la grabación de cada uno (por defecto, la que tienes abierta)."
+  unmatched_file: "{file} ({n} detecciones, hasta {duration})"
+  skip: "(no importar)"
+  assign: "Importar"
+  beyond_duration: "Algunas detecciones de «{file}» pasan del final de «{recording}». Comprueba que es la grabación correcta."
+
+detections:
+  title: "Detecciones"
+  count: "{n}, {pending} sin revisar"
+  new_annotation: "Nueva anotación"
+  correct: "Correcta"
+  incorrect: "Incorrecta"
+  doubtful: "Dudosa"
+  play_fragment: "Escuchar"
+  change_species: "Corregir especie"
+  notes: "Notas"
+  toggle_human: "Voz humana"
+  delete: "Borrar"
+  none: "No hay detecciones en esta grabación (con la confianza mínima elegida)."
+  select_hint: "Haz clic en una detección (en la tabla o en su etiqueta sobre el espectrograma) para revisarla."
+  select_first: "Primero elige una detección."
+  last_change: "Último cambio: {user}, {date}"
+  scientific_name: "Nombre científico"
+  common_name: "Nombre común"
+  species_placeholder: "Escribe o elige una especie"
+  original_species: "BirdNET indicó: {species}"
+  corrected_from: "Corregida (BirdNET: {species})"
+  marked_human: "Marcada como voz humana: es privada y nunca se exportará."
+  unmarked_human: "Ya no está marcada como voz humana."
+  draw_hint: "Dibuja un rectángulo sobre el espectrograma arrastrando el ratón. Esc para cancelar."
+  box_summary: "Tiempo {start}–{end} · Frecuencia {low}–{high} kHz"
+  is_human: "Contiene voz humana (privada, nunca se exporta)"
+  human_voice: "Voz humana"
+  col_state: "Estado"
+  col_species: "Especie"
+  col_confidence: "Confianza"
+  col_time: "Tiempo"
+  col_source: "Origen"
+  col_reviewer: "Revisor/a"
+
+species:
+  title: "Especies detectadas"
+  filters: "Filtros del listado"
+  min_confidence: "Confianza mínima de BirdNET"
+  recordings: "Grabaciones"
+  help: "No se incluyen las detecciones marcadas como incorrectas, la voz humana ni los ruidos. La confianza de BirdNET es una puntuación de 0 a 100 %, no una probabilidad de acierto."
+  export: "Exportar CSV"
+  saved_info: "Listados guardados: {n}. Último: {date} ({user})."
+  none: "No hay especies con estos filtros."
+  col_status: "Estado"
+  col_common: "Nombre común"
+  col_scientific: "Nombre científico"
+  col_max: "Confianza máx."
+  col_mean: "Confianza media"
+  col_detections: "Detecciones"
+  col_recordings: "Grabaciones"
+  col_validation: "Validación (✓ ? ○)"

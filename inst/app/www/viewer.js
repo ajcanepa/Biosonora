@@ -15,6 +15,27 @@
   const SPECTRO_HEIGHT = 300;
   const WAVE_HEIGHT = 60;
 
+  // Estilos de los rectángulos de detección. Van dentro de wavesurfer (shadow
+  // DOM), adonde no llega el CSS de la página. El estado se indica con color,
+  // tipo de borde y símbolo en la etiqueta (nunca solo con el color).
+  const OVERLAY_CSS = `
+    .bs-overlay { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+    .bs-overlay.drawing { pointer-events: auto; cursor: crosshair; background: rgba(255,255,255,0.05); }
+    .bs-box { position: absolute; box-sizing: border-box; border: 2px dashed #ffd54f; pointer-events: none; }
+    .bs-box.correct { border-style: solid; border-color: #7cf29a; }
+    .bs-box.incorrect { border-style: dotted; border-color: #ff7b7b; opacity: 0.75; }
+    .bs-box.doubtful { border-style: dashed; border-color: #ffb14e; }
+    .bs-box.human { border-color: #e6e6e6;
+      background: repeating-linear-gradient(45deg, rgba(255,255,255,0.10) 0 6px, transparent 6px 12px); }
+    .bs-box.selected { border-width: 3px; box-shadow: 0 0 0 1px #000, 0 0 0 3px #fff; z-index: 2; }
+    .bs-box-label { position: absolute; left: 0; pointer-events: auto; cursor: pointer;
+      font: 11px/1.35 system-ui, sans-serif; color: #111; background: rgba(255,255,255,0.88);
+      padding: 0 4px; border-radius: 2px; white-space: nowrap; }
+    .bs-box.selected .bs-box-label { background: #fff; font-weight: 700; }
+    .bs-draw-rect { position: absolute; border: 2px solid #fff; background: rgba(255,255,255,0.18);
+      pointer-events: none; }
+  `;
+
   function formatTime(seconds) {
     if (!isFinite(seconds) || seconds < 0) seconds = 0;
     const m = Math.floor(seconds / 60);
@@ -71,6 +92,7 @@
     if (!duration) return;
     const basePxPerSec = p.waveEl.clientWidth / duration;
     p.ws.zoom(basePxPerSec * p.zoom);
+    renderBoxes(p); // al ampliar caben más etiquetas completas
   }
 
   function seekRelative(p, seconds) {
@@ -100,6 +122,8 @@
 
   // Eje de frecuencias (kHz) a la izquierda del espectrograma
   function drawAxis(p, fmin, fmax) {
+    p.fmin = fmin;
+    p.fmax = fmax;
     const axis = p.axisEl;
     axis.innerHTML = '';
     axis.style.paddingTop = WAVE_HEIGHT + 'px';
@@ -193,6 +217,21 @@
     ws.getWrapper().appendChild(spectro);
     p.img = img;
 
+    // Capa para los rectángulos de detección y para dibujar anotaciones
+    const root = ws.getWrapper().getRootNode();
+    if (root && root.appendChild && !root.querySelector('style.bs-overlay-style')) {
+      const style = document.createElement('style');
+      style.className = 'bs-overlay-style';
+      style.textContent = OVERLAY_CSS;
+      root.appendChild(style);
+    }
+    const overlay = document.createElement('div');
+    overlay.className = 'bs-overlay';
+    spectro.appendChild(overlay);
+    p.overlay = overlay;
+    p.drawing = false;
+    bindDrawing(p, overlay);
+
     // Línea de tiempo (debajo), con el tiempo real de la grabación
     ws.registerPlugin(WaveSurfer.Timeline.create({
       height: 18,
@@ -207,9 +246,15 @@
       updateTime(p, ws.getCurrentTime());
     });
     ws.on('play', () => updatePlayButton(p, true));
-    ws.on('pause', () => updatePlayButton(p, false));
+    ws.on('pause', () => { updatePlayButton(p, false); p.stopAt = null; });
     ws.on('finish', () => updatePlayButton(p, false));
-    ws.on('timeupdate', (t) => updateTime(p, t));
+    ws.on('timeupdate', (t) => {
+      updateTime(p, t);
+      if (p.stopAt !== null && p.stopAt !== undefined && t >= p.stopAt) {
+        p.stopAt = null;
+        ws.pause();
+      }
+    });
     ws.on('seeking', (t) => updateTime(p, t));
     ws.on('error', (e) => console.error('[biosonora] audio', e));
 
@@ -217,6 +262,7 @@
     updatePlayButton(p, false);
     updateTime(p, 0);
     drawAxis(p, msg.fmin, msg.fmax);
+    renderBoxes(p);
   }
 
   // Solo cambia la imagen (rango de frecuencias, contraste o paleta)
@@ -225,6 +271,7 @@
     if (!p || !p.img) return;
     p.img.src = msg.spectro_url;
     drawAxis(p, msg.fmin, msg.fmax);
+    renderBoxes(p); // las posiciones dependen del rango de frecuencias
   }
 
   function showLoading(msg) {
@@ -238,6 +285,131 @@
   function showError(msg) {
     const p = getPlayer(msg.id);
     if (p) setLoading(p, false);
+  }
+
+  // ---- Detecciones sobre el espectrograma ----
+  function setDetections(msg) {
+    const p = getPlayer(msg.id);
+    if (!p) return;
+    p.items = msg.items || [];
+    renderBoxes(p);
+  }
+
+  function renderBoxes(p) {
+    const overlay = p.overlay;
+    if (!overlay || !p.origDuration || p.fmax === undefined) return;
+    overlay.querySelectorAll('.bs-box').forEach((el) => el.remove());
+    const span = p.fmax - p.fmin;
+    const labelsAt = {}; // etiquetas que empiezan en el mismo instante se apilan
+    (p.items || []).forEach((d) => {
+      const high = Math.min(d.high, p.fmax);
+      const low = Math.max(d.low, p.fmin);
+      if (high <= low) return; // fuera del rango de frecuencias visible
+      const box = document.createElement('div');
+      box.className = 'bs-box ' + d.state + (d.category === 'human' ? ' human' : '') +
+        (d.selected ? ' selected' : '');
+      box.style.left = (d.start / p.origDuration * 100) + '%';
+      box.style.width = ((d.end - d.start) / p.origDuration * 100) + '%';
+      box.style.top = ((p.fmax - high) / span * 100) + '%';
+      box.style.height = ((high - low) / span * 100) + '%';
+      const label = document.createElement('span');
+      label.className = 'bs-box-label';
+      // Si el rectángulo es estrecho, solo el símbolo de estado (el nombre
+      // completo aparece al pasar el ratón); la seleccionada, siempre completa
+      const widthPx = (d.end - d.start) / p.origDuration * overlay.clientWidth;
+      label.textContent = (d.selected || widthPx >= 90) ? d.label : d.label.split(' ')[0];
+      label.title = d.label;
+      const key = d.start.toFixed(2);
+      labelsAt[key] = (labelsAt[key] || 0) + 1;
+      label.style.top = ((labelsAt[key] - 1) * 16) + 'px';
+      // Clic en la etiqueta: seleccionar la detección y saltar a su inicio
+      label.addEventListener('pointerdown', (e) => e.stopPropagation());
+      label.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (p.ws) p.ws.setTime(d.start / p.speed);
+        Shiny.setInputValue('biosonora_box_click', { id: d.id, t: Date.now() }, { priority: 'event' });
+      });
+      box.appendChild(label);
+      overlay.appendChild(box);
+    });
+  }
+
+  // Modo "nueva anotación": el usuario dibuja un rectángulo (tiempo x frecuencia)
+  function startDrawing(msg) {
+    const p = getPlayer(msg.id);
+    if (!p || !p.overlay) return;
+    if (p.ws) p.ws.pause();
+    p.drawing = true;
+    p.overlay.classList.add('drawing');
+  }
+
+  function stopDrawing(p) {
+    p.drawing = false;
+    if (p.overlay) {
+      p.overlay.classList.remove('drawing');
+      p.overlay.querySelectorAll('.bs-draw-rect').forEach((el) => el.remove());
+    }
+  }
+
+  function bindDrawing(p, overlay) {
+    let start = null;
+    let rectEl = null;
+    const pos = (e) => {
+      const r = overlay.getBoundingClientRect();
+      return {
+        x: Math.min(1, Math.max(0, (e.clientX - r.left) / r.width)),
+        y: Math.min(1, Math.max(0, (e.clientY - r.top) / r.height)),
+        w: r.width, h: r.height
+      };
+    };
+    // Mientras se dibuja, los clics no llegan a wavesurfer (no saltan)
+    ['pointerdown', 'pointermove', 'pointerup', 'click'].forEach((type) => {
+      overlay.addEventListener(type, (e) => { if (p.drawing) e.stopPropagation(); });
+    });
+    overlay.addEventListener('pointerdown', (e) => {
+      if (!p.drawing) return;
+      e.preventDefault();
+      start = pos(e);
+      rectEl = document.createElement('div');
+      rectEl.className = 'bs-draw-rect';
+      overlay.appendChild(rectEl);
+      overlay.setPointerCapture(e.pointerId);
+    });
+    overlay.addEventListener('pointermove', (e) => {
+      if (!p.drawing || !start || !rectEl) return;
+      const c = pos(e);
+      rectEl.style.left = (Math.min(start.x, c.x) * 100) + '%';
+      rectEl.style.top = (Math.min(start.y, c.y) * 100) + '%';
+      rectEl.style.width = (Math.abs(c.x - start.x) * 100) + '%';
+      rectEl.style.height = (Math.abs(c.y - start.y) * 100) + '%';
+    });
+    overlay.addEventListener('pointerup', (e) => {
+      if (!p.drawing || !start) return;
+      const c = pos(e);
+      const tooSmall = Math.abs(c.x - start.x) * c.w < 4 || Math.abs(c.y - start.y) * c.h < 4;
+      const x0 = Math.min(start.x, c.x), x1 = Math.max(start.x, c.x);
+      const y0 = Math.min(start.y, c.y), y1 = Math.max(start.y, c.y);
+      start = null;
+      stopDrawing(p);
+      if (tooSmall) return;
+      const span = p.fmax - p.fmin;
+      Shiny.setInputValue('biosonora_new_box', {
+        start_s: x0 * p.origDuration,
+        end_s: x1 * p.origDuration,
+        low_hz: p.fmax - y1 * span,
+        high_hz: p.fmax - y0 * span,
+        t: Date.now()
+      }, { priority: 'event' });
+    });
+  }
+
+  // Reproducir solo un fragmento (tiempos reales de la grabación)
+  function playRange(msg) {
+    const p = getPlayer(msg.id);
+    if (!p || !p.ws) return;
+    p.ws.setTime(msg.start / p.speed);
+    p.ws.play();
+    p.stopAt = msg.end / p.speed; // se fija después de play(): la pausa previa lo borraría
   }
 
   // ---- Atajos de teclado ----
@@ -276,8 +448,16 @@
       case '-':
         if (p) setZoom(p, p.zoom / 2);
         return;
+      case 'Escape':
+        if (p && p.drawing) stopDrawing(p);
+        return;
+      case 'ArrowUp':
+      case 'ArrowDown':
+        e.preventDefault();
+        Shiny.setInputValue('biosonora_key', { key: e.key, t: Date.now() }, { priority: 'event' });
+        return;
       default:
-        if (/^[nNpPrR1-4]$/.test(e.key) && window.Shiny) {
+        if (/^[nNpPrRvVxXdDfFaA1-4]$/.test(e.key) && window.Shiny) {
           Shiny.setInputValue('biosonora_key', { key: e.key, t: Date.now() }, { priority: 'event' });
         }
     }
@@ -294,5 +474,8 @@
     Shiny.addCustomMessageHandler('biosonora-viewer-loading', showLoading);
     Shiny.addCustomMessageHandler('biosonora-viewer-error', showError);
     Shiny.addCustomMessageHandler('biosonora-current-track', setCurrentTrack);
+    Shiny.addCustomMessageHandler('biosonora-viewer-detections', setDetections);
+    Shiny.addCustomMessageHandler('biosonora-viewer-draw', startDrawing);
+    Shiny.addCustomMessageHandler('biosonora-viewer-play-range', playRange);
   });
 })();

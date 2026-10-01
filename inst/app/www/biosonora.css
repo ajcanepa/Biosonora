@@ -118,3 +118,23 @@
 [data-bs-theme="dark"] .rt-search,
 [data-bs-theme="dark"] .rt-page-size-select,
 [data-bs-theme="dark"] .rt-page-button { background: var(--bs-body-bg); color: var(--bs-body-color); }
+
+/* ---- Detecciones: estado con símbolo + texto + color ---- */
+.bs-val { white-space: nowrap; font-weight: 500; }
+.bs-val-pending { color: #8a6d00; }
+.bs-val-correct { color: #2E6B4F; }
+.bs-val-incorrect { color: #B23A3A; text-decoration: line-through; }
+.bs-val-doubtful { color: #b8741a; }
+.bs-species-validated { color: #2E6B4F; }
+.bs-species-doubtful { color: #b8741a; }
+.bs-species-pending { color: #6c757d; }
+[data-bs-theme="dark"] .bs-val-pending { color: #ffd54f; }
+[data-bs-theme="dark"] .bs-val-correct, [data-bs-theme="dark"] .bs-species-validated { color: #8fd6a8; }
+[data-bs-theme="dark"] .bs-val-incorrect { color: #ff8a8a; }
+[data-bs-theme="dark"] .bs-val-doubtful, [data-bs-theme="dark"] .bs-species-doubtful { color: #ffc866; }
+.bs-human { font-style: italic; }
+.bs-human::before { content: "\1F512  "; }   /* candado: dato privado */
+.bs-detection-actions kbd { font-size: 0.7rem; padding: 0.05rem 0.25rem; }
+.bs-selected-detection { padding: 0.3rem 0.5rem; border-left: 4px solid var(--bs-primary);
+  background: var(--bs-tertiary-bg); border-radius: 0.25rem; }
+.bs-reviewer { max-width: 14rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

@@ -23,13 +23,22 @@ app_ui <- function(request) {
             width = 290,
             mod_load_ui("load"),
             tags$hr(),
+            mod_birdnet_import_ui("birdnet"),
+            tags$hr(),
             mod_track_list_filters_ui("tracks")
           ),
           mod_viewer_ui("viewer"),
+          mod_detections_ui("detections"),
           mod_track_list_ui("tracks")
         )
       ),
+      bslib::nav_panel(
+        title = i18n("nav.species"),
+        value = "species",
+        mod_species_list_ui("species")
+      ),
       bslib::nav_spacer(),
+      bslib::nav_item(mod_reviewer_ui("reviewer")),
       bslib::nav_item(text_size_selector()),
       bslib::nav_item(
         tags$label(`for` = "lang", class = "visually-hidden", i18n("nav.language")),

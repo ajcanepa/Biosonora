@@ -4,6 +4,7 @@
 #   - sites      : puntos de muestreo (nombre, coordenadas, precisión)
 #   - recordings : una fila por archivo de audio, con sus metadatos,
 #                  punto de muestreo, observador y estado de revisión
+#   - detections, detection_history, species_lists: ver fct_detections.R
 #
 # Las fechas se guardan como texto ISO 8601 en UTC ("2026-08-10T16:00:00Z").
 # Cada cambio se escribe al momento: no hace falta "guardar".
@@ -89,6 +90,7 @@ db_init <- function(con) {
   DBI::dbExecute(con, "CREATE INDEX IF NOT EXISTS idx_rec_start ON recordings(start_utc)")
   DBI::dbExecute(con, "CREATE INDEX IF NOT EXISTS idx_rec_site ON recordings(site_id)")
   DBI::dbExecute(con, "CREATE INDEX IF NOT EXISTS idx_rec_status ON recordings(review_status)")
+  db_init_detections(con)
   invisible(con)
 }
 

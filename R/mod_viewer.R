@@ -86,7 +86,12 @@ shortcuts_help <- function() {
     c("+ −", "viewer.key_zoom"),
     c("N / P", "viewer.key_next_prev"),
     c("1 2 3 4", "viewer.key_speed"),
-    c("R", "viewer.key_reviewed")
+    c("R", "viewer.key_reviewed"),
+    c("V / X / D", "viewer.key_validate"),
+    c("F", "viewer.key_fragment"),
+    c("\u2191 \u2193", "viewer.key_detections"),
+    c("A", "viewer.key_annotate"),
+    c("Esc", "viewer.key_escape")
   )
   tags$table(
     class = "table table-sm mb-0",
@@ -100,9 +105,10 @@ shortcuts_help <- function() {
 #' @param media Lista con dir (carpeta temporal de la sesión) y url (prefijo web).
 #' @param data_changed reactiveVal de cambios de datos.
 #' @param key_event reactive con las teclas enviadas desde el navegador.
+#' @param reviewer Resultado de mod_reviewer_server().
 #' @return Lista con `nav` (reactiveVal: +1 siguiente, -1 anterior).
 #' @noRd
-mod_viewer_server <- function(id, con, lang, current, media, data_changed, key_event) {
+mod_viewer_server <- function(id, con, lang, current, media, data_changed, key_event, reviewer) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     player_id <- ns("player")
@@ -121,7 +127,7 @@ mod_viewer_server <- function(id, con, lang, current, media, data_changed, key_e
       rec <- isolate(recording())
       req(rec)
       if (rec$review_status == "unreviewed") {
-        db_set_review_status(con, rec$recording_id, "in_review")
+        db_set_review_status(con, rec$recording_id, "in_review", isolate(reviewer$name()))
         data_changed(data_changed() + 1)
       }
       if (!is.na(rec$error_key)) {
@@ -248,8 +254,10 @@ mod_viewer_server <- function(id, con, lang, current, media, data_changed, key_e
     toggle_reviewed <- function() {
       rec <- isolate(recording())
       if (is.null(rec)) return()
+      user <- reviewer$require()
+      if (is.null(user)) return()
       new_status <- if (rec$review_status == "reviewed") "in_review" else "reviewed"
-      db_set_review_status(con, rec$recording_id, new_status, rec$observer %||% NA_character_)
+      db_set_review_status(con, rec$recording_id, new_status, user)
       data_changed(data_changed() + 1)
     }
     observeEvent(input$toggle_reviewed, toggle_reviewed())
