@@ -61,6 +61,16 @@ tr <- function(key, lang = default_language, ...) {
   unname(txt)
 }
 
+#' Traduce una lista de valores con un prefijo de clave
+#'
+#' tr_values("validation.", c("correct", "pending")) -> c("Correcta", "Sin revisar").
+#' Con una lista vacía devuelve character() (paste0 devolvería el prefijo solo).
+#' @noRd
+tr_values <- function(prefix, values, lang = default_language) {
+  if (length(values) == 0) return(character())
+  vapply(paste0(prefix, values), tr, "", lang = lang, USE.NAMES = FALSE)
+}
+
 #' Texto de interfaz traducible en vivo
 #'
 #' Crea <span data-i18n="clave">texto</span>. El script i18n.js cambia el

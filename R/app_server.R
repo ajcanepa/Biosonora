@@ -53,6 +53,7 @@ app_server <- function(input, output, session) {
                   new_box = reactive(input$biosonora_new_box))
   )
   mod_species_list_server("species", con, lang, reviewer, data_changed)
+  mod_export_server("export", con, lang, reviewer, data_changed)
 
   # Botones y teclas "siguiente / anterior" del visor mueven la lista
   observeEvent(nav(), tracks$move(nav()$step))

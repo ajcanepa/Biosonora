@@ -22,6 +22,7 @@ Imports:
     reactable,
     shiny,
     tuneR,
+    writexl,
     yaml
 Suggests:
     testthat (>= 3.0.0)

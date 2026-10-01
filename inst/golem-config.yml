@@ -17,7 +17,8 @@ default:
   observation_org:
     method: "Oído"
     counting_method: "Visto/Sin contar"
-    classifier: "BirdNET APP"
+    activity: "Presente"
+    classifier: "BirdNet APP"
     notes_template: "ID mediante {classifier}"
 
 production:

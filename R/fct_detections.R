@@ -77,6 +77,7 @@ db_init_detections <- function(con) {
       n_pending       INTEGER,
       status          TEXT
     )")
+  db_init_taxonomy(con)
   invisible(con)
 }
 
