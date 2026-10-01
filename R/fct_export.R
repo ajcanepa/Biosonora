@@ -5,7 +5,10 @@
 #   - Solo detecciones validadas como correctas (y anotaciones manuales). De
 #     forma opcional, las no revisadas por encima de un umbral (is certain = False).
 #   - Nunca: voz humana, ruidos, detecciones incorrectas ni dudosas.
-#   - Valores fijos (inst/golem-config.yml): method, counting method y notes.
+#   - Valores fijos (inst/golem-config.yml): method, counting method y activity.
+#   - notes: "ID mediante <clasificador>" según cómo se identificaron las
+#     detecciones de esa observación (p. ej. "ID mediante BirdNet APP",
+#     "ID mediante anotación manual" o, si se mezclan, los dos unidos con " + ").
 #   - CSV en UTF-8 sin BOM, separado por comas, fechas AAAA-MM-DD, horas HH:MM,
 #     coordenadas en grados decimales con punto.
 
@@ -95,7 +98,7 @@ observation_rows <- function(det) {
       lng = round(g$lon[1], 6),
       accuracy = if (is.na(g$accuracy_m[1])) NA_integer_ else as.integer(round(g$accuracy_m[1])),
       number = 1L,
-      notes = cfg$notes,
+      notes = observation_note(g$classifier, g$source, cfg),
       sex = NA_character_,
       is_certain = if (any(g$validation == "correct")) "True" else "False",
       is_escape = "False",
@@ -119,14 +122,43 @@ observation_rows <- function(det) {
 #' @noRd
 observation_org_config <- function() {
   cfg <- tryCatch(get_golem_config("observation_org"), error = function(e) list())
-  classifier <- cfg$classifier %||% "BirdNet APP"
   list(
     method = cfg$method %||% "Oído",
     counting_method = cfg$counting_method %||% "Visto/Sin contar",
     activity = cfg$activity %||% "Presente",
-    notes = gsub("{classifier}", classifier, cfg$notes_template %||% "ID mediante {classifier}",
-                 fixed = TRUE)
+    notes_template = cfg$notes_template %||% "ID mediante {classifier}",
+    classifier_names = unlist(cfg$classifier_names %||% list(BirdNET = "BirdNet APP")),
+    manual_name = cfg$manual_name %||% "anotación manual"
   )
+}
+
+#' Nombre visible de un clasificador
+#'
+#' Se busca por el principio del nombre interno ("BirdNET" vale para
+#' "BirdNET-Analyzer 2.4.0"); si no está configurado, se usa el interno.
+#' @noRd
+classifier_display_name <- function(classifier, cfg = observation_org_config()) {
+  names_map <- cfg$classifier_names
+  vapply(classifier, function(x) {
+    if (is.na(x) || !nzchar(x)) return(NA_character_)
+    hit <- names(names_map)[startsWith(tolower(x), tolower(names(names_map)))]
+    if (length(hit)) unname(names_map[hit[which.max(nchar(hit))]]) else x
+  }, character(1), USE.NAMES = FALSE)
+}
+
+#' Nota de una observación según cómo se identificaron sus detecciones
+#'
+#' Primero los modelos (en orden alfabético) y al final la anotación manual:
+#' "ID mediante BirdNet APP", "ID mediante anotación manual" o
+#' "ID mediante BirdNet APP + anotación manual".
+#' @param classifier,source Columnas de las detecciones de la observación.
+#' @noRd
+observation_note <- function(classifier, source, cfg = observation_org_config()) {
+  models <- classifier_display_name(classifier[source != "manual"], cfg)
+  models <- sort(unique(models[!is.na(models)]))
+  methods <- c(models, if (any(source == "manual")) cfg$manual_name)
+  if (length(methods) == 0) methods <- cfg$manual_name
+  gsub("{classifier}", paste(methods, collapse = " + "), cfg$notes_template, fixed = TRUE)
 }
 
 #' Escribe el CSV para Observation.org (UTF-8 sin BOM, comas, punto decimal)

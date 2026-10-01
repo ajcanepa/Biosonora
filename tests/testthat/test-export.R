@@ -55,7 +55,7 @@ test_that("los valores fijos están en las tablas de valores permitidos para ave
   expect_true(cfg$method %in% allowed("method"))
   expect_true(cfg$counting_method %in% allowed("counting method"))
   expect_true(cfg$activity %in% allowed("activity"))
-  expect_equal(cfg$notes, "ID mediante BirdNet APP")
+  expect_equal(cfg$notes_template, "ID mediante {classifier}")
 })
 
 test_that("por defecto solo se exportan las detecciones validadas, agrupadas por especie, punto y día", {
@@ -120,6 +120,7 @@ test_that("sin coordenadas o sin correspondencia taxonómica no se puede exporta
   expect_equal(nrow(r2$unmatched), 0)
   expect_equal(r2$rows$`scientific name`, "Parus major") # ambas se agrupan en una
   expect_equal(r2$rows$time, "17:53")                     # bext: hora local
+  expect_equal(r2$rows$notes, "ID mediante anotación manual") # las dos son manuales
 })
 
 test_that("la taxonomía traduce nombres de Clements a IOC y respeta los del usuario", {
@@ -173,4 +174,29 @@ test_that("la exportación completa incluye todo menos la voz humana", {
   xlsx <- tempfile(fileext = ".xlsx")
   writexl::write_xlsx(all, xlsx)
   expect_gt(file.size(xlsx), 1000)
+})
+
+test_that("la nota indica cómo se identificó cada observación", {
+  cfg <- observation_org_config()
+  expect_equal(classifier_display_name(c("BirdNET", "BirdNET-Analyzer 2.4.0", "Perch v2", NA), cfg),
+               c("BirdNet APP", "BirdNet APP", "Perch v2", NA))
+  expect_equal(observation_note("BirdNET", "birdnet", cfg), "ID mediante BirdNet APP")
+  expect_equal(observation_note(c("BirdNET", "BirdNET-Analyzer 2.4.0"), c("birdnet", "birdnet"), cfg),
+               "ID mediante BirdNet APP")
+  expect_equal(observation_note(NA, "manual", cfg), "ID mediante anotación manual")
+  expect_equal(observation_note(c("BirdNET", NA), c("birdnet", "manual"), cfg),
+               "ID mediante BirdNet APP + anotación manual")
+  # Un modelo futuro aparece con su nombre sin tocar el código
+  expect_equal(observation_note(c("Perch v2", "BirdNET"), c("birdnet", "birdnet"), cfg),
+               "ID mediante BirdNet APP + Perch v2")
+})
+
+test_that("en la exportación, una observación mixta lleva los dos orígenes", {
+  con <- export_db()
+  on.exit(DBI::dbDisconnect(con))
+  for (id in det_id(con, "Turdus merula", "%20260810%")) db_validate_detection(con, id, "correct", "Ana")
+  rec <- DBI::dbGetQuery(con, "SELECT recording_id FROM recordings WHERE file_name = '24BBD608675B68F7_20260810_160000.WAV'")$recording_id
+  db_add_manual_detection(con, rec, 0.1, 0.3, 1000, 4000, "Turdus merula", user = "Ana")
+  r <- build_observation_export(con)
+  expect_equal(r$rows$notes[r$rows$date == "2026-08-10"], "ID mediante BirdNet APP + anotación manual")
 })

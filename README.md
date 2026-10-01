@@ -115,7 +115,7 @@ Archivo `inst/golem-config.yml`:
 | `data_dir` | Carpeta de datos (vacío = la del usuario) |
 | `max_upload_mb` | Tamaño máximo de cada archivo subido |
 | `server_folders` | Modo servidor: carpetas que se pueden analizar |
-| `observation_org` | Valores fijos de la exportación (método, conteo, actividad, nota) |
+| `observation_org` | Valores de la exportación: método, conteo, actividad y la nota «ID mediante …» (nombre visible de cada modelo en `classifier_names`; anotaciones manuales en `manual_name`) |
 
 Variables de entorno: `BIOSONORA_DATA_DIR` (carpeta de datos), `BIOSONORA_BIRDNET_ENV`
 (entorno de BirdNET), `GOLEM_CONFIG_ACTIVE=production` (modo servidor).

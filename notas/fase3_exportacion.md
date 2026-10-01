@@ -13,7 +13,7 @@ Decisiones acordadas:
 | scientific name | nombre IOC (tabla de equivalencias) |
 | lat / lng / accuracy | del punto de muestreo |
 | number | 1 |
-| notes | «ID mediante BirdNet APP» (`inst/golem-config.yml`: `classifier`, `notes_template`) |
+| notes | «ID mediante <clasificador>» según el origen de las detecciones: «ID mediante BirdNet APP», «ID mediante anotación manual» o ambos unidos con « + » (`inst/golem-config.yml`: `notes_template`, `classifier_names`, `manual_name`) |
 | is certain | True si hay alguna detección validada como correcta; False si solo hay no revisadas |
 | is escape | False |
 | activity | Presente |

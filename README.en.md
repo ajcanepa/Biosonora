@@ -113,7 +113,7 @@ File `inst/golem-config.yml`:
 | `data_dir` | Data folder (empty = the user's) |
 | `max_upload_mb` | Maximum size of each uploaded file |
 | `server_folders` | Server mode: folders that can be scanned |
-| `observation_org` | Fixed export values (method, counting, activity, note) |
+| `observation_org` | Export values: method, counting, activity and the "ID mediante …" note (display name of each model in `classifier_names`; manual annotations in `manual_name`) |
 
 Environment variables: `BIOSONORA_DATA_DIR` (data folder), `BIOSONORA_BIRDNET_ENV` (BirdNET
 environment), `GOLEM_CONFIG_ACTIVE=production` (server mode).

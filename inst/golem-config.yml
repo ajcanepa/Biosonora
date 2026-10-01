@@ -26,8 +26,15 @@ default:
     method: "Oído"
     counting_method: "Visto/Sin contar"
     activity: "Presente"
-    classifier: "BirdNet APP"
+    # Nota de cada observación: "ID mediante <cómo se identificó>".
+    # Nombre visible de cada clasificador (por el principio de su nombre
+    # interno: "BirdNET" vale para "BirdNET" y "BirdNET-Analyzer 2.4.0").
+    # Un clasificador que no esté en la lista aparece con su nombre interno.
     notes_template: "ID mediante {classifier}"
+    classifier_names:
+      "BirdNET": "BirdNet APP"
+    # Texto para las anotaciones que dibuja una persona
+    manual_name: "anotación manual"
 
 production:
   app_prod: yes
