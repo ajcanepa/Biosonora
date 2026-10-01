@@ -6,17 +6,16 @@
 #  - "analyzer_csv": CSV de BirdNET-Analyzer
 #      Start (s), End (s), Scientific name, Common name, Confidence[, File, ...]
 #  - "raven": tabla de selección de Raven (separada por tabuladores)
-#      Selection, Begin Time (s), End Time (s), Common Name, Scientific Name,
-#      Species Code, Confidence, View, Channel, File Offset (s),
-#      Low Freq (Hz), High Freq (Hz), Begin Path
-#      En tablas que combinan varios audios, "Begin Time" se acumula entre
-#      archivos: el inicio real dentro de cada audio es "File Offset (s)".
+#      Selection, View, Channel, Begin Time (s), End Time (s), Low Freq (Hz),
+#      High Freq (Hz), Common Name, Species Code, Confidence, Begin Path,
+#      File Offset (s)   [tabla de un audio: SIN nombre científico]
+#      La tabla combinada añade "Scientific Name". En ella "Begin Time" se
+#      acumula entre archivos: el inicio real en cada audio es "File Offset (s)".
 #  - "simple": tabla sencilla (p. ej. paquete birdnetR)
 #      start, end, scientific_name, common_name, confidence
 #
-# Los formatos analyzer_csv y raven siguen el código fuente oficial de
-# BirdNET-Analyzer (birdnet_analyzer/analyze/core.py); "simple" se ha
-# comprobado con un archivo real del proyecto.
+# Los tres formatos se han comprobado con archivos reales (analyzer_csv y
+# raven, con BirdNET-Analyzer 2.4.0 ejecutado desde Biosonora).
 
 # Banda de frecuencias que analiza BirdNET (se usa si el archivo no la indica)
 birdnet_default_band <- c(0, 15000)
@@ -99,9 +98,23 @@ read_birdnet_file <- function(path, display_name = basename(path)) {
     out$start_s <- ifelse(is.na(offset), out$start_s, offset)
     out$end_s <- out$start_s + duration
   }
-  # Raven antiguo sin nombre científico: se usa el común para no perder la fila
+  # La tabla de Raven de cada audio NO trae el nombre científico (solo el
+  # común y el código de eBird): se traduce el código con la tabla del propio
+  # BirdNET-Analyzer instalado. Si no está instalado, no se puede adivinar.
   missing_sci <- is.na(out$scientific_name) | out$scientific_name == ""
-  out$scientific_name[missing_sci] <- out$common_name[missing_sci]
+  if (format == "raven" && any(missing_sci)) {
+    codes <- birdnet_code_map()
+    code_col <- if ("Species Code" %in% names(raw)) as.character(raw[["Species Code"]]) else rep(NA, nrow(raw))
+    from_code <- if (is.null(codes)) rep(NA_character_, nrow(raw)) else unname(codes[code_col])
+    out$scientific_name[missing_sci] <- from_code[missing_sci]
+    still <- is.na(out$scientific_name) | out$scientific_name == ""
+    # Clases que no son especies (p. ej. "Human vocal"): su código es el propio nombre
+    nonspecies <- still & out$common_name %in% c(birdnet_human_classes, birdnet_other_classes)
+    out$scientific_name[nonspecies] <- out$common_name[nonspecies]
+    if (any(is.na(out$scientific_name) | out$scientific_name == "")) {
+      biosonora_abort("error.birdnet_raven_no_scientific", file = display_name)
+    }
+  }
 
   validate_birdnet_rows(out, display_name)
   out$category <- birdnet_category(out$scientific_name)
@@ -193,4 +206,18 @@ match_detections_to_recordings <- function(detections, recordings, results_name)
     detections$recording_id[no_ref] <- find(audio_stem_from_results(results_name))
   }
   detections
+}
+
+#' Tabla de códigos de eBird -> nombre científico del BirdNET-Analyzer instalado
+#'
+#' No se copia al proyecto (forma parte de BirdNET): se lee del entorno de
+#' Python. Devuelve NULL si BirdNET no está instalado.
+#' @noRd
+birdnet_code_map <- function() {
+  file <- birdnet_package_file("eBird_taxonomy_codes_2024E.json")
+  if (is.null(file)) return(NULL)
+  codes <- jsonlite::fromJSON(file, simplifyVector = TRUE)
+  values <- unlist(codes)
+  is_code <- !grepl("_", names(values)) # entradas código -> "Científico_Común"
+  stats::setNames(sub("_.*$", "", values[is_code]), names(values)[is_code])
 }

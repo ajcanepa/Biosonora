@@ -317,7 +317,8 @@ mod_track_list_server <- function(id, con, lang, data_changed) {
       showNotification(tr("recorder.saved", lang(), n = length(ids)), type = "message")
     })
 
-    list(current = current, move = move, min_confidence = min_confidence)
+    list(current = current, move = move, min_confidence = min_confidence,
+         visible_ids = reactive(visible()$recording_id), selected_ids = selected_ids)
   })
 }
 

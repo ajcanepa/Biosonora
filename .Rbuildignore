@@ -14,3 +14,4 @@ $run_dev.*
 ^renv$
 ^renv\.lock$
 ^\.Rprofile$
+^python$

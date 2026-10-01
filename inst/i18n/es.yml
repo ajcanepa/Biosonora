@@ -5,6 +5,7 @@
 common:
   cancel: "Cancelar"
   save: "Guardar"
+  close: "Cerrar"
 
 nav:
   review: "Revisión"
@@ -198,6 +199,9 @@ error:
   invalid_category: "Tipo de detección no válido."
   annotation_too_small: "El rectángulo es demasiado pequeño. Vuelve a dibujarlo."
   only_manual_delete: "Solo se pueden borrar las anotaciones manuales. Las de BirdNET márcalas como incorrectas."
+  birdnet_not_installed: "BirdNET no está instalado en este ordenador."
+  birdnet_no_recordings: "No se encuentran los archivos de audio de las grabaciones elegidas. Puede que se hayan movido."
+  birdnet_raven_no_scientific: "«{file}» es una tabla de Raven sin nombres científicos y no se pueden deducir porque BirdNET no está instalado. Importa mejor el archivo CSV de resultados (.BirdNET.results.csv)."
 
 
 reviewer:
@@ -225,7 +229,7 @@ species_status:
 
 birdnet:
   title: "3. Resultados de BirdNET"
-  help: "Importa los archivos de resultados (CSV o tabla de Raven). Se asocian solos a sus grabaciones."
+  help: "O importa archivos de resultados ya generados (CSV o tabla de Raven). Se asocian solos a sus grabaciones."
   choose: "Elegir archivos…"
   no_file: "Ningún archivo elegido"
   imported: "Importadas {n} detecciones nuevas de {files} archivos."
@@ -348,3 +352,30 @@ taxonomy:
   edit_title: "Equivalencia para {name}"
   edit_help: "Escribe para buscar en la lista IOC (nombre científico o común)."
   reset: "Quitar equivalencia manual"
+
+
+birdnet_run:
+  button: "Analizar con BirdNET…"
+  title: "Analizar grabaciones con BirdNET"
+  scope: "¿Qué grabaciones?"
+  scope_current: "La grabación abierta"
+  scope_selected: "Las marcadas en la lista ({n})"
+  scope_visible: "Todas las que se ven con los filtros actuales ({n})"
+  min_confidence: "Confianza mínima"
+  use_location: "Usar las coordenadas del punto de muestreo (solo especies posibles en esa zona)"
+  use_week: "Usar la semana del año de cada grabación (solo especies posibles en esa época)"
+  overlap: "Solapamiento entre ventanas"
+  sensitivity: "Sensibilidad"
+  locale: "Idioma de los nombres comunes"
+  help: "BirdNET trabaja en segundo plano: puedes seguir revisando mientras tanto. Tarda unos 5 segundos por minuto de audio. Los modelos de BirdNET tienen licencia CC BY-NC-SA 4.0 (solo uso no comercial)."
+  start: "Analizar"
+  already_running: "Ya hay un análisis de BirdNET en marcha. Espera a que termine o cancélalo."
+  nothing_to_analyze: "No hay grabaciones que analizar con esa opción."
+  no_location_warning: "{n} grabaciones no tienen punto de muestreo con coordenadas: se analizarán sin filtro geográfico y pueden aparecer especies poco probables. Asígnales un punto antes de analizar."
+  progress: "BirdNET: {done} de {total} grabaciones"
+  cancel: "Cancelar"
+  cancelled: "Análisis de BirdNET cancelado."
+  finished: "BirdNET ha terminado con {files} grabaciones: {n} detecciones nuevas. Las que ya existían se conservan con su validación."
+  failed: "BirdNET no ha podido terminar el análisis. Comprueba que las grabaciones se pueden leer y vuelve a intentarlo; si se repite, avisa al equipo de Biosonora."
+  not_installed_title: "BirdNET no está instalado"
+  not_installed_help: "Para analizar grabaciones desde la app hace falta instalar BirdNET (unos 2,5 GB, una sola vez). Pide a la persona que administra Biosonora que ejecute estos comandos:"

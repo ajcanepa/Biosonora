@@ -10,6 +10,7 @@ mod_birdnet_import_ui <- function(id) {
   ns <- NS(id)
   tagList(
     h5(class = "mb-1", i18n("birdnet.title")),
+    mod_birdnet_run_ui("birdnet_run"),
     p(class = "text-muted small mb-2", i18n("birdnet.help")),
     i18n_attr(
       fileInput(ns("files"), label = NULL, multiple = TRUE, accept = c(".csv", ".txt"),

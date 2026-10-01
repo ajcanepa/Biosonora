@@ -83,3 +83,7 @@ renv/staging/
 config_local.yml
 *.pem
 *.key
+
+# Entorno de Python (se crea con uv sync; nunca al repositorio)
+python/.venv/
+__pycache__/

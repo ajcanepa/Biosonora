@@ -5,6 +5,7 @@
 common:
   cancel: "Cancel"
   save: "Save"
+  close: "Close"
 
 nav:
   review: "Review"
@@ -198,6 +199,9 @@ error:
   invalid_category: "Invalid detection type."
   annotation_too_small: "The box is too small. Please draw it again."
   only_manual_delete: "Only manual annotations can be deleted. Mark BirdNET ones as incorrect instead."
+  birdnet_not_installed: "BirdNET is not installed on this computer."
+  birdnet_no_recordings: "The audio files of the chosen recordings cannot be found. They may have been moved."
+  birdnet_raven_no_scientific: "“{file}” is a Raven table without scientific names and they cannot be deduced because BirdNET is not installed. Import the CSV results file (.BirdNET.results.csv) instead."
 
 
 reviewer:
@@ -225,7 +229,7 @@ species_status:
 
 birdnet:
   title: "3. BirdNET results"
-  help: "Import result files (CSV or Raven selection table). They are linked to their recordings automatically."
+  help: "Or import result files you already have (CSV or Raven selection table). They are linked to their recordings automatically."
   choose: "Choose files…"
   no_file: "No file chosen"
   imported: "Imported {n} new detections from {files} files."
@@ -348,3 +352,30 @@ taxonomy:
   edit_title: "Equivalence for {name}"
   edit_help: "Type to search the IOC list (scientific or common name)."
   reset: "Remove manual equivalence"
+
+
+birdnet_run:
+  button: "Analyse with BirdNET…"
+  title: "Analyse recordings with BirdNET"
+  scope: "Which recordings?"
+  scope_current: "The open recording"
+  scope_selected: "Those ticked in the list ({n})"
+  scope_visible: "All those shown with the current filters ({n})"
+  min_confidence: "Minimum confidence"
+  use_location: "Use the sampling site coordinates (only species possible in that area)"
+  use_week: "Use the week of the year of each recording (only species possible at that time)"
+  overlap: "Overlap between windows"
+  sensitivity: "Sensitivity"
+  locale: "Language of common names"
+  help: "BirdNET runs in the background: you can keep reviewing meanwhile. It takes about 5 seconds per minute of audio. BirdNET models are licensed CC BY-NC-SA 4.0 (non-commercial use only)."
+  start: "Analyse"
+  already_running: "A BirdNET analysis is already running. Wait for it to finish or cancel it."
+  nothing_to_analyze: "There are no recordings to analyse with that option."
+  no_location_warning: "{n} recordings have no sampling site with coordinates: they will be analysed without a location filter and unlikely species may appear. Assign them a site before analysing."
+  progress: "BirdNET: {done} of {total} recordings"
+  cancel: "Cancel"
+  cancelled: "BirdNET analysis cancelled."
+  finished: "BirdNET has finished with {files} recordings: {n} new detections. Existing ones are kept with their validation."
+  failed: "BirdNET could not finish the analysis. Check that the recordings can be read and try again; if it happens again, tell the Biosonora team."
+  not_installed_title: "BirdNET is not installed"
+  not_installed_help: "To analyse recordings from the app, BirdNET must be installed (about 2.5 GB, only once). Ask the person who manages Biosonora to run these commands:"

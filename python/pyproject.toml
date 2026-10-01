@@ -1,0 +1,17 @@
+# Entorno de Python para ejecutar BirdNET desde Biosonora.
+# Se instala con uv (https://docs.astral.sh/uv/). Las versiones exactas
+# quedan fijadas en uv.lock, igual que renv.lock para R.
+#
+# Licencias: BirdNET-Analyzer (código) MIT; modelos de BirdNET CC BY-NC-SA 4.0
+# (solo uso no comercial: investigación, educación, ciencia ciudadana).
+[project]
+name = "biosonora-birdnet"
+version = "0.1.0"
+description = "Entorno de BirdNET-Analyzer para Biosonora"
+requires-python = "==3.12.*"
+dependencies = [
+    "birdnet-analyzer==2.4.0",
+]
+
+[tool.uv]
+package = false

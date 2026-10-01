@@ -39,6 +39,7 @@ app_server <- function(input, output, session) {
   mod_load_server("load", con, lang, data_changed)
   tracks <- mod_track_list_server("tracks", con, lang, data_changed)
   mod_birdnet_import_server("birdnet", con, lang, tracks$current, reviewer, data_changed)
+  mod_birdnet_run_server("birdnet_run", con, lang, tracks, reviewer, data_changed)
 
   # Eventos que envía el navegador (viewer.js): teclas, clic en una detección
   # y rectángulo dibujado para una anotación nueva
